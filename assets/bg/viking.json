@@ -1,0 +1,76 @@
+{ "skeleton": { "images": "images/" },
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "trazo", "bone": "root", "attachment": "trazo" },
+	{ "name": "skateboard", "bone": "root", "attachment": "skateboard" },
+	{ "name": "L_Shoe", "bone": "root", "attachment": "L_Shoe" },
+	{ "name": "L_Leg", "bone": "root", "attachment": "L_Leg" },
+	{ "name": "R_Shoe", "bone": "root", "attachment": "R_Shoe" },
+	{ "name": "R_Leg", "bone": "root", "attachment": "R_Leg" },
+	{ "name": "L_Hombro", "bone": "root", "attachment": "L_Hombro" },
+	{ "name": "L_Arm", "bone": "root", "attachment": "L_Arm" },
+	{ "name": "L_Hand", "bone": "root", "attachment": "L_Hand" },
+	{ "name": "torso", "bone": "root", "attachment": "torso" },
+	{ "name": "R_Hombro", "bone": "root", "attachment": "R_Hombro" },
+	{ "name": "R_Brazo", "bone": "root", "attachment": "R_Brazo" },
+	{ "name": "R_Mano", "bone": "root", "attachment": "R_Mano" },
+	{ "name": "barbas", "bone": "root", "attachment": "barbas" },
+	{ "name": "bigotes", "bone": "root", "attachment": "bigotes" },
+	{ "name": "casco", "bone": "root", "attachment": "casco" }
+],
+"skins": {
+	"default": {
+		"trazo": {
+			"trazo": { "x": 131.5, "y": -111, "width": 249, "height": 216 }
+		},
+		"skateboard": {
+			"skateboard": { "x": 103, "y": -200, "width": 172, "height": 36 }
+		},
+		"L_Shoe": {
+			"L_Shoe": { "x": 141, "y": -180.5, "width": 50, "height": 35 }
+		},
+		"L_Leg": {
+			"L_Leg": { "x": 131.5, "y": -157, "width": 51, "height": 40 }
+		},
+		"R_Shoe": {
+			"R_Shoe": { "x": 53, "y": -183, "width": 46, "height": 34 }
+		},
+		"R_Leg": {
+			"R_Leg": { "x": 80, "y": -163.5, "width": 58, "height": 43 }
+		},
+		"L_Hombro": {
+			"L_Hombro": { "x": 153, "y": -78.5, "width": 62, "height": 69 }
+		},
+		"L_Arm": {
+			"L_Arm": { "x": 192.5, "y": -106.5, "width": 53, "height": 51 }
+		},
+		"L_Hand": {
+			"L_Hand": { "x": 227, "y": -117.5, "width": 60, "height": 37 }
+		},
+		"torso": {
+			"torso": { "x": 106.5, "y": -108, "width": 109, "height": 116 }
+		},
+		"R_Hombro": {
+			"R_Hombro": { "x": 61, "y": -76.5, "width": 62, "height": 69 }
+		},
+		"R_Brazo": {
+			"R_Brazo": { "x": 29, "y": -111.5, "width": 46, "height": 57 }
+		},
+		"R_Mano": {
+			"R_Mano": { "x": 27, "y": -145, "width": 42, "height": 44 }
+		},
+		"barbas": {
+			"barbas": { "x": 124.5, "y": -92, "width": 77, "height": 102 }
+		},
+		"bigotes": {
+			"bigotes": { "x": 137.5, "y": -80.5, "width": 71, "height": 57 }
+		},
+		"casco": {
+			"casco": { "x": 100.5, "y": -36.5, "width": 89, "height": 71 }
+		}
+	}
+},
+"animations": { "animation": {} }
+}
