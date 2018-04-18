@@ -193,12 +193,16 @@ function Viking(){
     this.x = 0;
     this.y = 0;
     this.z = 270
+    this.w = 150
     this.width = 245;
     this.height = 216;
     
     this.animate = function(){
 
-        ctx.drawImage(this.img,this.width*this.x,this.height*this.y,this.width,this.height,150,this.z,this.width,this.height);
+        if(this.z < 270){   
+        this.z += 4
+    }
+        ctx.drawImage(this.img,this.width*this.x,this.height*this.y,this.width,this.height,this.w,this.z,this.width,this.height);
         
         if (frames % 4 === 0){
         this.x++;
@@ -213,21 +217,20 @@ function Viking(){
     }
     this.img = document.createElement("img");
     this.img.src = "assets/bg/character4.png";
-    
-    this.isTouching = function(enemy){
-        return (this.x < enemy.x + enemy.width) &&
-               (this.x + this.width > enemy.x) &&
-               (this.y < enemy.y + enemy.height) &&
-               (this.y + this.height > enemy.y);
-    };
-}
 
-function jumpViking(){
-    viking.z -= 120;
-    if (frames % 400 === 0){
-        viking.z = 270;
+    this.jumpViking = function(){
+        if(viking.z === 270){
+        viking.z -= 200;
+    }else{
+        viking.z = viking.z
+        }        
     }
-}
+
+
+ }
+
+
+
 
 ////////////////////////////
 ////////    ENEMY   ////////
@@ -249,7 +252,48 @@ function Enemy(){
         this.x = this.x - 5;
         ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
     }
+
+    this.isTouching = function(viking){
+        return (this.x < viking.z + viking.width) &&
+               (this.x + this.width > viking.z) &&
+               (this.y < viking.w + viking.height) &&
+               (this.y + this.height > viking.w);
+    };
+
 } 
+
+////////////////////////////
+////////  POWER UPS ////////
+////////////////////////////
+
+function Coin(){
+    this.x = 0;
+    this.y = 0;
+    this.z = 270;
+    this.w = canvas.width;
+    this.width = 41;
+    this.height = 41;
+    
+    this.animate = function(){
+
+        this.w = this.w - 6;
+
+        ctx.drawImage(this.img,this.width*this.x,this.height*this.y,this.width,this.height,this.w,this.z,this.width,this.height);
+        
+        if (frames % 4 === 0){
+        this.x++;
+    }
+        if(this.x>2){
+          this.x=0;
+          this.y++;
+        }
+        if(this.y>2){
+          this.y=0;
+        }
+    }
+    this.img = document.createElement("img");
+    this.img.src = "assets/36002.png";
+}
 
 ///////////////////////////////////////////
 ////////                           ////////
@@ -265,9 +309,11 @@ var sky3 = new Sky3();
 var clouds1 = new Clouds1();
 var clouds2 = new Clouds2();
 var viking = new Viking();
+var coins = [];
 var enemies = [];
-var intervalo;
+var intervalo; 
 var frames = 0;
+var enemy = enemies.forEach;
 
 
 ///////////////////////////////////////////
@@ -296,14 +342,33 @@ function drawEnemies(){
     })
 }
 
-function checkCollition(){
-    enemies.forEach(function(enemy){
-        if(viking.isTouching(enemy)){
-            console.log("ouch!")
-        }
+function generateCoins (){
+    var x = [23,67,143,320,420,520];
+    var rand = x[Math.floor(Math.random() * x.length)];
+    if(!(frames % rand === 0)) return;
+    var coin = new Coin ();
+    coins.push(coin);
+}
+
+function deleteCoins(){
+    if(enemies.length === 5){
+        coin.splice(0,1)
+    }
+}
+
+function drawCoins(){
+    coins.forEach(function(coin){
+        coin.animate();
     })
 }
 
+function checkCollition(){
+     if(enemy.isTouching(viking)){
+        console.log("ouch!")
+     } 
+}
+
+  
 ///////////////////////////////////////////
 ////////                           ////////
 ////////      MAIN FUNCTIONS       ////////
@@ -313,12 +378,11 @@ function checkCollition(){
 function gravedad (){
     var grav = 0.8;
     var val_reb = 0;
-
-
 }
 
 function update(){
     generateEnemies();
+    generateCoins();
     deleteEnemies();
     frames++
     ctx.clearRect(0,0,canvas.width, canvas.height);
@@ -332,6 +396,13 @@ function update(){
     if(Math.floor(frames / 60) >= 160){
         sky3.draw();
     }
+    if(Math.floor(frames / 60) >= 240){
+        sky2.draw();
+    }
+    if(Math.floor(frames / 60) >= 320){
+        sky.draw();
+    }
+
     clouds1.draw();
     clouds2.draw();
     board.draw();
@@ -339,7 +410,8 @@ function update(){
     board2.drawScore();
     drawEnemies();
     viking.animate();
-    checkCollition();
+    drawCoins();
+
 }
 
 function start(){
@@ -349,6 +421,8 @@ function start(){
     }, 1000/60);
     board2.score = 0;
     frames = 0;
+    var coins = [];
+
 }
 
 function stop(){
@@ -373,6 +447,6 @@ document.getElementById('pause-button').onclick = function(){
 
 addEventListener('keydown', function(e){
     if(e.keyCode === 32){
-        jumpViking()    
+        viking.jumpViking()
     }
 });
