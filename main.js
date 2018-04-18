@@ -4,7 +4,7 @@ var ctx = canvas.getContext('2d');
 
 ///////////////////////////////////////////
 ////////                           ////////
-////////          Classes          ////////
+////////          CLASSES          ////////
 ////////                           ////////
 ///////////////////////////////////////////
 
@@ -64,10 +64,12 @@ function Board2(){
     };
 
     this.drawScore = function(){
-        this.score = "Score - " + Math.floor(frames / 60);
-        ctx.font = "50px Lucida Console";
+        this.score = "Distance : " + Math.floor(frames / 60);
+        this.coinScore = "Coins : " + coinsCollection;
+        ctx.font = "50px PR Viking";
         ctx.fillStyle = "Gray";
-        ctx.fillText(this.score,300, this.y+50);
+        ctx.fillText(this.score,60, this.y+50);
+        ctx.fillText(this.coinScore,660, this.y+50);
 };
 } 
 
@@ -182,6 +184,14 @@ function Sky3(){
 } 
 
 ////////////////////////////
+////////    SCORE   ////////
+////////////////////////////
+
+function Score(){
+    
+}
+
+////////////////////////////
 //////// CHARACTERS ////////
 ////////////////////////////
 
@@ -223,14 +233,9 @@ function Viking(){
         viking.z -= 200;
     }else{
         viking.z = viking.z
-        }        
+        }
     }
-
-
  }
-
-
-
 
 ////////////////////////////
 ////////    ENEMY   ////////
@@ -254,10 +259,10 @@ function Enemy(){
     }
 
     this.isTouching = function(viking){
-        return (this.x < viking.z + viking.width) &&
-               (this.x + this.width > viking.z) &&
-               (this.y < viking.w + viking.height) &&
-               (this.y + this.height > viking.w);
+        return (this.x < viking.w + viking.width) &&
+               (this.x + this.width > viking.w) &&
+               (this.y < viking.z + viking.height) &&
+               (this.y + this.height > viking.z);
     };
 
 } 
@@ -269,7 +274,7 @@ function Enemy(){
 function Coin(){
     this.x = 0;
     this.y = 0;
-    this.z = 270;
+    this.z = 150;
     this.w = canvas.width;
     this.width = 41;
     this.height = 41;
@@ -291,8 +296,19 @@ function Coin(){
           this.y=0;
         }
     }
+
     this.img = document.createElement("img");
     this.img.src = "assets/36002.png";
+
+    this.isTouching = function(viking){
+        return (this.w < viking.w + viking.width) &&
+               (this.w + this.width > viking.w) &&
+               (this.z < viking.z + viking.height) &&
+               (this.z + this.height > viking.z);
+    };
+
+
+
 }
 
 ///////////////////////////////////////////
@@ -313,8 +329,7 @@ var coins = [];
 var enemies = [];
 var intervalo; 
 var frames = 0;
-var enemy = enemies.forEach;
-
+var coinsCollection = 0;
 
 ///////////////////////////////////////////
 ////////                           ////////
@@ -351,7 +366,7 @@ function generateCoins (){
 }
 
 function deleteCoins(){
-    if(enemies.length === 5){
+    if(enemies.length === 10){
         coin.splice(0,1)
     }
 }
@@ -363,9 +378,21 @@ function drawCoins(){
 }
 
 function checkCollition(){
+    enemies.forEach(function(enemy){
      if(enemy.isTouching(viking)){
         console.log("ouch!")
-     } 
+     }
+    })
+}
+
+function checkCollition2(){
+    coins.forEach(function(coin){
+     if(coin.isTouching(viking)){
+        coin.z = -50;
+        coinsCollection = coinsCollection + 1;
+        console.log(coinsCollection)
+    }
+    })
 }
 
   
@@ -384,6 +411,7 @@ function update(){
     generateEnemies();
     generateCoins();
     deleteEnemies();
+    deleteCoins();
     frames++
     ctx.clearRect(0,0,canvas.width, canvas.height);
     
@@ -411,6 +439,8 @@ function update(){
     drawEnemies();
     viking.animate();
     drawCoins();
+    checkCollition();
+    checkCollition2()
 
 }
 
@@ -421,13 +451,12 @@ function start(){
     }, 1000/60);
     board2.score = 0;
     frames = 0;
-    var coins = [];
-
 }
 
 function stop(){
     clearInterval(intervalo);
     intervalo = 0;
+    frames = frames;
 }
 
 

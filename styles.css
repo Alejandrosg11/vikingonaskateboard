@@ -1,3 +1,12 @@
+@font-face{
+  font-family: "PR Viking";
+  src: url('assets/PR Viking.ttf');
+}
+
+*{
+  font-family: "PR Viking";
+}
+
 body {
     text-align: center;
   }
@@ -20,4 +29,7 @@ body {
   
   canvas {
     border: 1px solid black;
+    text-align: center;
+
   }
+
