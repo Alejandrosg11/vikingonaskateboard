@@ -47,6 +47,9 @@ function Board2(){
     this.distance = 0;
     this.recorded = Math.floor(frames / 60)
     this.score = 0;
+    this.music = new Audio();
+    this.music.src = "assets/bg/Viking.mp3";
+    this.distance = 0;
 
     this.img.onload = function(){
         this.draw();
@@ -66,6 +69,11 @@ function Board2(){
     this.drawScore = function(){
         this.score = "Distance : " + Math.floor(frames / 60);
         this.coinScore = "Coins : " + coinsCollection;
+
+        if (Math.floor(frames / 60)){
+            this.distance = this.distance + 1;
+        }
+
         ctx.font = "50px PR Viking";
         ctx.fillStyle = "Gray";
         ctx.fillText(this.score,60, this.y+50);
@@ -362,8 +370,8 @@ function Arrow(){
     this.isTouching = function(jump){
         return (this.x < jump.colX + jump.width) &&
                (this.x + this.width > jump.colX) &&
-               (this.y < jump.colY + jump.height) &&
-               (this.y + this.height > jump.colY);
+               (this.y < (jump.colY + 20) + (jump.height / 2)) &&
+               (this.y + (this.height / 2) > (jump.colY + 20));
     };
 
 } 
@@ -440,6 +448,9 @@ var coinsCollection = 0;
 ////////                           ////////
 ///////////////////////////////////////////
 
+var gameImg = new Image()
+gameImg.src =  "assets/gameOver.png";
+
 function gameOver(){
 
     this.x = 0;
@@ -449,14 +460,18 @@ function gameOver(){
     this.img = new Image();
     this.img.src = "assets/gameOver.png";
     stop();
-    ctx.clearRect(0,0,canvas.width, canvas.height);
-    ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
+    console.log(this.img, this.x, this.y, this.width, this.height)
+    ctx.drawImage(gameImg, this.x, this.y, this.width,this.height);
     ctx.font = "50px PR Viking";
     ctx.fillStyle = "white";
-    ctx.fillText(Math.floor(frames / 60), 700,200);
+    ctx.fillText((parseInt(board2.distance / 60)), 700,200);
     ctx.font = "50px PR Viking";
     ctx.fillStyle = "white";
     ctx.fillText(coinsCollection, 700, 300);
+    ctx.font = "50px PR Viking";
+    ctx.fillStyle = "white";
+    ctx.fillText((parseInt(board2.distance / 60)) + coinsCollection, 700, 400);
+    
 }
 
 
@@ -525,7 +540,8 @@ function checkCollition(){
      if(enemy.isTouching(viking)){
         console.log("ouch!")
         gameOver();
-     }
+
+    }
     })
 }
 
@@ -620,14 +636,14 @@ function start(){
     }, 1000/60);
     board2.score = 0;
     frames = 0;
-    coinsCollection = 0;
-
+    board2.music.play();
 }
 
 function stop(){
     clearInterval(intervalo);
     intervalo = 0;
     frames = frames;
+    board2.music.pause();
 }
 
 
