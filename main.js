@@ -44,9 +44,9 @@ function Board2(){
     this.height = canvas.height;
     this.img = new Image();
     this.img.src = "assets/bg/rocks_2.png"
+    this.distance = 0;
+    this.recorded = Math.floor(frames / 60)
     this.score = 0;
-
-
 
     this.img.onload = function(){
         this.draw();
@@ -317,26 +317,53 @@ function Viking(){
 
 function Enemy(){
     this.x = canvas.width;
-    this.y = 380;
-    this.width = 100;
-    this.height = 100;
+    this.y = 440;
+    this.width = 75;
+    this.height = 50;
     this.img = new Image();
-    this.img.src = "assets/bg/enemy.png";
+    this.img.src = "assets/bg/chocolate.png";
 
     this.img.onload = function(){
         this.draw();
     }.bind(this);
 
     this.draw = function(){
-        this.x = this.x - 5;
+        this.x = this.x - 7;
         ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
     }
 
     this.isTouching = function(viking){
-        return (this.x < viking.w + viking.width) &&
-               (this.x + this.width > viking.w) &&
+        return ((this.x - 50) < (viking.w / 2) + (viking.width / 2)) &&
+               ((this.x - 50) + (this.width / 2) > (viking.w / 2)) &&
                (this.y < viking.z + viking.height) &&
                (this.y + this.height > viking.z);
+    };
+
+} 
+
+function Arrow(){
+    this.x = canvas.width;
+    this.y = 120;
+    this.width = 154;
+    this.height = 34;
+    this.img = new Image();
+    this.img.src = "assets/bg/arrow.png";
+
+    this.img.onload = function(){
+        this.draw();
+    }.bind(this);
+
+    this.draw = function(){
+        this.x = this.x - 12;
+        this.y = this.y + .2;
+        ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
+    }
+
+    this.isTouching = function(jump){
+        return (this.x < jump.colX + jump.width) &&
+               (this.x + this.width > jump.colX) &&
+               (this.y < jump.colY + jump.height) &&
+               (this.y + this.height > jump.colY);
     };
 
 } 
@@ -375,10 +402,10 @@ function Coin(){
     this.img.src = "assets/36002.png";
 
     this.isTouching = function(jump){
-        return (this.w < jump.colX + jump.width) &&
-               (this.w + this.width > jump.colX) &&
+        return (this.w < (jump.colX + 100) + jump.width) &&
+               (this.w + (this.width / 2) > (jump.colX - 100)) &&
                (this.z < jump.colY + jump.height) &&
-               (this.z + this.height > jump.colY);
+               (this.z + (this.height / 2) > jump.colY);
     };
 
 
@@ -402,6 +429,7 @@ var viking = new Viking();
 var jump = new Jump();
 var coins = [];
 var enemies = [];
+var arrows = [];
 var intervalo; 
 var frames = 0;
 var coinsCollection = 0;
@@ -411,6 +439,26 @@ var coinsCollection = 0;
 ////////       AUX FUNCTIONS       ////////
 ////////                           ////////
 ///////////////////////////////////////////
+
+function gameOver(){
+
+    this.x = 0;
+    this.y = 0;
+    this.width = 900;
+    this.height = 500;
+    this.img = new Image();
+    this.img.src = "assets/gameOver.png";
+    stop();
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
+    ctx.font = "50px PR Viking";
+    ctx.fillStyle = "white";
+    ctx.fillText(Math.floor(frames / 60), 700,200);
+    ctx.font = "50px PR Viking";
+    ctx.fillStyle = "white";
+    ctx.fillText(coinsCollection, 700, 300);
+}
+
 
 function generateEnemies (){
     var x = [100,200,300];
@@ -429,6 +477,26 @@ function deleteEnemies(){
 function drawEnemies(){
     enemies.forEach(function(enemy){
         enemy.draw();
+    })
+}
+
+function generateArrows (){
+    var x = [100,200,300];
+    var rand = x[Math.floor(Math.random() * x.length)];
+    if(!(frames % rand === 0)) return;
+    var arrow = new Arrow ();
+    arrows.push(arrow);
+}
+
+function deleteArrows(){
+    if(arrows.length === 5){
+        arrows.splice(0,1)
+    }
+}
+
+function drawArrows(){
+    arrows.forEach(function(arrow){
+        arrow.draw();
     })
 }
 
@@ -456,6 +524,7 @@ function checkCollition(){
     enemies.forEach(function(enemy){
      if(enemy.isTouching(viking)){
         console.log("ouch!")
+        gameOver();
      }
     })
 }
@@ -465,10 +534,20 @@ function checkCollition2(){
      if(coin.isTouching(jump)){
         coin.z = -50;
         coinsCollection = coinsCollection + 1;
-        console.log(coinsCollection)
+        console.log("Coin + 1")
     }
     })
 }
+
+function checkCollition3(){
+    arrows.forEach(function(arrow){
+     if(arrow.isTouching(jump)){
+        console.log("arrow ouch!");
+        gameOver();
+    }
+    })
+}
+
 
   
 ///////////////////////////////////////////
@@ -477,16 +556,13 @@ function checkCollition2(){
 ////////                           ////////
 ///////////////////////////////////////////
 
-function gravedad (){
-    var grav = 0.8;
-    var val_reb = 0;
-}
-
 function update(){
     generateEnemies();
     generateCoins();
+    generateArrows();
     deleteEnemies();
     deleteCoins();
+    deleteArrows();
     frames++
     ctx.clearRect(0,0,canvas.width, canvas.height);
     
@@ -512,6 +588,7 @@ function update(){
     board2.draw();
     board2.drawScore();
     drawEnemies();
+    drawArrows();
 
 /*
     viking.animate();
@@ -531,6 +608,8 @@ function update(){
     drawCoins();
     checkCollition();
     checkCollition2()
+    checkCollition3()
+
 
 }
 
@@ -541,6 +620,8 @@ function start(){
     }, 1000/60);
     board2.score = 0;
     frames = 0;
+    coinsCollection = 0;
+
 }
 
 function stop(){
