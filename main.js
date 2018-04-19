@@ -230,12 +230,86 @@ function Viking(){
 
     this.jumpViking = function(){
         if(viking.z === 270){
+        viking.z -= 2000;
+        jump.colY = 100;
+    }else{
+        viking.z = viking.z;
+        }
+    }
+
+ }
+
+ function Jump(){
+    this.x = 150;
+    this.y = 100;
+    this.colX = 150;
+    this.colY = 270;
+    this.width = 245;
+    this.height = 216;
+    this.img = new Image();
+    this.img.src = "assets/bg/images/para_spritesheet/01.png";
+
+    this.img.onload = function(){
+        this.draw();
+    }.bind(this);
+
+    this.draw = function(){
+        this.y = this.y + 4
+        this.colY = this.colY + 4
+        ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
+        if (this.y === 272){
+            console.log("ya!")
+            viking.z = 270;
+            this.y = 100;
+            this.colY = 270;
+    }
+
+    
+    }
+
+} 
+
+ /*
+function Viking(){
+    this.x = 0;
+    this.y = 0;
+    this.z = 270
+    this.w = 150
+    this.width = 245;
+    this.height = 216;
+    
+    this.animate = function(){
+
+        if(this.z < 270){   
+        this.z += 4
+    }
+        ctx.drawImage(this.img,this.width*this.x,this.height*this.y,this.width,this.height,this.w,this.z,this.width,this.height);
+        
+        if (frames % 4 === 0){
+        this.x++;
+    }
+        if(this.x>2){
+          this.x=0;
+          this.y++;
+        }
+        if(this.y>4){
+          this.y=0;
+        }
+    }
+    this.img = document.createElement("img");
+    this.img.src = "assets/bg/character4.png";
+
+    this.jumpViking = function(){
+        if(viking.z === 270){
         viking.z -= 200;
     }else{
         viking.z = viking.z
         }
     }
  }
+
+ */
+
 
 ////////////////////////////
 ////////    ENEMY   ////////
@@ -300,11 +374,11 @@ function Coin(){
     this.img = document.createElement("img");
     this.img.src = "assets/36002.png";
 
-    this.isTouching = function(viking){
-        return (this.w < viking.w + viking.width) &&
-               (this.w + this.width > viking.w) &&
-               (this.z < viking.z + viking.height) &&
-               (this.z + this.height > viking.z);
+    this.isTouching = function(jump){
+        return (this.w < jump.colX + jump.width) &&
+               (this.w + this.width > jump.colX) &&
+               (this.z < jump.colY + jump.height) &&
+               (this.z + this.height > jump.colY);
     };
 
 
@@ -325,6 +399,7 @@ var sky3 = new Sky3();
 var clouds1 = new Clouds1();
 var clouds2 = new Clouds2();
 var viking = new Viking();
+var jump = new Jump();
 var coins = [];
 var enemies = [];
 var intervalo; 
@@ -387,7 +462,7 @@ function checkCollition(){
 
 function checkCollition2(){
     coins.forEach(function(coin){
-     if(coin.isTouching(viking)){
+     if(coin.isTouching(jump)){
         coin.z = -50;
         coinsCollection = coinsCollection + 1;
         console.log(coinsCollection)
@@ -437,7 +512,22 @@ function update(){
     board2.draw();
     board2.drawScore();
     drawEnemies();
+
+/*
     viking.animate();
+    jump.draw();
+*/
+
+    if (viking.z != 270){
+        jump.draw();
+        
+    }else {
+        viking.animate();
+        viking.z = 270;
+    }
+
+    
+
     drawCoins();
     checkCollition();
     checkCollition2()
