@@ -9,7 +9,40 @@ var ctx = canvas.getContext('2d');
 ///////////////////////////////////////////
 
 ////////////////////////////
+////////    FLOOR   ////////
+////////////////////////////
+
+////////////////////////////
 //////// MOUNTAINS  ////////
+////////////////////////////
+
+function Floor(){
+    this.x = 0;
+    this.y = 0;
+    this.width = canvas.width;
+    this.height = canvas.height;
+    this.img = new Image();
+    this.img.src = "assets/bg/floor.png"
+
+
+    this.img.onload = function(){
+        this.draw();
+    }.bind(this);
+
+    this.move = function(){
+        this.x = this.x-7;
+        if(this.x < -canvas.width) this.x = 0;
+    };
+
+    this.draw = function(){
+        this.move();
+        ctx.drawImage(this.img, this.x,this.y, this.width,this.height);
+        ctx.drawImage(this.img,this.x + canvas.width,this.y,this.width,this.height);
+    };
+} 
+
+////////////////////////////
+//////// MOUNTAIN 1 ////////
 ////////////////////////////
 
 function Board(){
@@ -36,6 +69,10 @@ function Board(){
         ctx.drawImage(this.img,this.x + canvas.width,this.y,this.width,this.height);
     };
 } 
+
+////////////////////////////
+//////// MOUNTAIN 2 ////////
+////////////////////////////
 
 function Board2(){
     this.x = 0;
@@ -192,14 +229,6 @@ function Sky3(){
 } 
 
 ////////////////////////////
-////////    SCORE   ////////
-////////////////////////////
-
-function Score(){
-    
-}
-
-////////////////////////////
 //////// CHARACTERS ////////
 ////////////////////////////
 
@@ -270,54 +299,9 @@ function Viking(){
             viking.z = 270;
             this.y = 100;
             this.colY = 270;
+        }
     }
-
-    
-    }
-
 } 
-
- /*
-function Viking(){
-    this.x = 0;
-    this.y = 0;
-    this.z = 270
-    this.w = 150
-    this.width = 245;
-    this.height = 216;
-    
-    this.animate = function(){
-
-        if(this.z < 270){   
-        this.z += 4
-    }
-        ctx.drawImage(this.img,this.width*this.x,this.height*this.y,this.width,this.height,this.w,this.z,this.width,this.height);
-        
-        if (frames % 4 === 0){
-        this.x++;
-    }
-        if(this.x>2){
-          this.x=0;
-          this.y++;
-        }
-        if(this.y>4){
-          this.y=0;
-        }
-    }
-    this.img = document.createElement("img");
-    this.img.src = "assets/bg/character4.png";
-
-    this.jumpViking = function(){
-        if(viking.z === 270){
-        viking.z -= 200;
-    }else{
-        viking.z = viking.z
-        }
-    }
- }
-
- */
-
 
 ////////////////////////////
 ////////    ENEMY   ////////
@@ -341,8 +325,8 @@ function Enemy(){
     }
 
     this.isTouching = function(viking){
-        return ((this.x - 50) < (viking.w / 2) + (viking.width / 2)) &&
-               ((this.x - 50) + (this.width / 2) > (viking.w / 2)) &&
+        return ((this.x - 100) < (viking.w / 2) + (viking.width / 2)) &&
+               ((this.x - 100) + (this.width / 2) > (viking.w / 2)) &&
                (this.y < viking.z + viking.height) &&
                (this.y + this.height > viking.z);
     };
@@ -369,7 +353,7 @@ function Arrow(){
 
     this.isTouching = function(jump){
         return (this.x < jump.colX + jump.width) &&
-               (this.x + this.width > jump.colX) &&
+               (this.x > (jump.colX + 20)) &&
                (this.y < (jump.colY + 20) + (jump.height / 2)) &&
                (this.y + (this.height / 2) > (jump.colY + 20));
     };
@@ -415,9 +399,6 @@ function Coin(){
                (this.z < jump.colY + jump.height) &&
                (this.z + (this.height / 2) > jump.colY);
     };
-
-
-
 }
 
 ///////////////////////////////////////////
@@ -428,6 +409,7 @@ function Coin(){
 
 var board = new Board();
 var board2 = new Board2();
+var floor = new Floor();
 var sky = new Sky();
 var sky2 = new Sky2();
 var sky3 = new Sky3();
@@ -473,7 +455,6 @@ function gameOver(){
     ctx.fillText((parseInt(board2.distance / 60)) + coinsCollection, 700, 400);
     
 }
-
 
 function generateEnemies (){
     var x = [100,200,300];
@@ -540,8 +521,7 @@ function checkCollition(){
      if(enemy.isTouching(viking)){
         console.log("ouch!")
         gameOver();
-
-    }
+        }   
     })
 }
 
@@ -564,7 +544,14 @@ function checkCollition3(){
     })
 }
 
-
+function checkCollition3(){
+    arrows.forEach(function(arrow){
+     if(arrow.isTouching(jump)){
+        console.log("arrow ouch!");
+        gameOver();
+    }
+    })
+}
   
 ///////////////////////////////////////////
 ////////                           ////////
@@ -585,16 +572,16 @@ function update(){
     if(Math.floor(frames / 60) >= 0){
         sky.draw();
     }
-    if(Math.floor(frames / 60) >= 80){
+    if(Math.floor(frames / 60) >= 20){
         sky2.draw();
     }
-    if(Math.floor(frames / 60) >= 160){
+    if(Math.floor(frames / 60) >= 40){
         sky3.draw();
     }
-    if(Math.floor(frames / 60) >= 240){
+    if(Math.floor(frames / 60) >= 60){
         sky2.draw();
     }
-    if(Math.floor(frames / 60) >= 320){
+    if(Math.floor(frames / 60) >= 80){
         sky.draw();
     }
 
@@ -603,13 +590,9 @@ function update(){
     board.draw();
     board2.draw();
     board2.drawScore();
+    floor.draw();
     drawEnemies();
     drawArrows();
-
-/*
-    viking.animate();
-    jump.draw();
-*/
 
     if (viking.z != 270){
         jump.draw();
@@ -619,14 +602,10 @@ function update(){
         viking.z = 270;
     }
 
-    
-
     drawCoins();
     checkCollition();
     checkCollition2()
     checkCollition3()
-
-
 }
 
 function start(){
@@ -646,7 +625,6 @@ function stop(){
     board2.music.pause();
 }
 
-
 ///////////////////////////////////////////
 ////////                           ////////
 ////////        START GAME         ////////
@@ -658,7 +636,7 @@ document.getElementById("start-button").onclick = function() {
   };
 
 document.getElementById('pause-button').onclick = function(){
-    stop();
+    location.reload();
 }
 
 addEventListener('keydown', function(e){
